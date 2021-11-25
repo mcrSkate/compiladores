@@ -1,43 +1,42 @@
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class RPNStacker {
-    
-    public Stack<Integer> stack = new Stack<Integer>();
 
-    public Integer mathOperation(char operator){
-        Integer snd = stack.pop();
-        Integer fst = stack.pop();
+    public Stack<Double> stack;
 
-        if(operator == '+'){
+    public RPNStacker(){
+        this.stack = new Stack<Double>();
+    }
+
+    public Double mathOperation(String operator){
+        Double snd = this.stack.pop();
+        Double fst = this.stack.pop();
+
+        if(operator.equals("+")){
             return fst + snd;
-        }else if(operator == '-'){
+        }else if(operator.equals("-")){
             return fst - snd;
-        }else if(operator == '*'){
+        }else if(operator.equals("*")){
             return fst * snd;
         }else return fst/snd;
     }
 
-    public Integer FileReaderFunction(){
-        try{
-            FileReader input = new FileReader("./inputs/Calc1.stk");
-            int r = 0;
-            String aux = "";
-            while((r=input.read())!=-1){
-                if(Character.isDigit((char)r)){
-                    aux += (char)r;
-                }else if((char)r == 10){
-                    if(!aux.equals("")){
-                        stack.push(Integer.parseInt(aux));
-                        aux = "";
-                    }
-                }else{
-                    stack.push(mathOperation((char)r));
-                }
+    public Double calcular(ArrayList<Token> tokens) throws Exception{
+        for(int i=0; i<tokens.size(); i++){
+            if(tokens.get(i).type==TokenType.NUM){
+                stack.push(Double.parseDouble(tokens.get(i).lexeme));
+            }else if(tokens.get(i).type==TokenType.PLUS){
+                stack.push(mathOperation(tokens.get(i).lexeme));
+            }else if(tokens.get(i).type==TokenType.MINUS){
+                stack.push(mathOperation(tokens.get(i).lexeme));
+            }else if(tokens.get(i).type==TokenType.STAR){
+                stack.push(mathOperation(tokens.get(i).lexeme));
+            }else if(tokens.get(i).type==TokenType.SLASH){
+                stack.push(mathOperation(tokens.get(i).lexeme));
+            }else{
+                throw new Exception("Undefined TokenType");
             }
-            input.close();
-        }catch(Exception e){
-            e.printStackTrace();
         }
         return stack.pop();
     }
